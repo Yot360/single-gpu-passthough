@@ -1,0 +1,12 @@
+#!/sbin/openrc-run
+
+description="Prevent sleep while libvirt domain is running"
+
+command="/bin/sh"
+command_args="-c 'exec loginctl inhibit sleep --why=\"Libvirt VM running\" sleep infinity'"
+command_background="yes"
+pidfile="/run/libvirt-inhibit.pid"
+
+depend() {
+    need libvirtd
+}

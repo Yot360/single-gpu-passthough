@@ -1,0 +1,30 @@
+#!/sbin/openrc-run
+
+description="Mount disks after boot"
+
+depend() {
+    need localmount
+}
+
+start() {
+    modprobe fuse 2>/dev/null
+    ebegin "Mounting disks in user space"
+    mkdir -p /run/media/yot/{HDD1TB,SSD1TB,NVME1TB,HDD}
+    sudo ntfs-3g -o uid=1000,gid=1000,dmask=0022,fmask=0033 /dev/disk/by-uuid/F890E59090E555A2 /run/media/yot/HDD1TB
+    sudo ntfs-3g -o uid=1000,gid=1000,dmask=0022,fmask=0033 /dev/disk/by-uuid/08C8C5B2C8C59E76 /run/media/yot/NVME1TB
+    sudo ntfs-3g -o uid=1000,gid=1000,dmask=0022,fmask=0033 /dev/disk/by-uuid/01DB5B06C426A540 /run/media/yot/SSD1TB
+    mount -t exfat -o rw,noauto,nofail,uid=1000,gid=1000,dmask=0022,fmask=0033,comment=x-gvfs-show UUID=CA04-710B /run/media/yot/HDD
+    eend $?
+}
+
+stop() {
+    ebegin "Unmounting disks"
+    
+    # Unmount all drives 
+    umount /run/media/yot/HDD
+    umount /run/media/yot/SSD1TB
+    umount /run/media/yot/NVME1TB
+    umount /run/media/yot/HDD1TB
+    
+    eend $?
+}
