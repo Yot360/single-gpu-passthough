@@ -4,13 +4,13 @@ if [[ $OBJECT == "win11" ]]; then
 	case "$OPERATION" in
         	"prepare")
                 rc-service libvirt-inhibit start >> /var/log/libvirt/custom_hooks.log 2>&1
-                rc-service disk-manager stop >> /var/log/libvirt/custom_hooks.log 2>&1
+                rc-service disks-manager stop >> /var/log/libvirt/custom_hooks.log 2>&1
                 /usr/local/bin/gpu-detach.sh >> /var/log/libvirt/custom_hooks.log 2>&1
                 ;;
 
                 "release")
                 rc-service libvirt-inhibit stop >> /var/log/libvirt/custom_hooks.log 2>&1
-                rc-service disk-manager start >> /var/log/libvirt/custom_hooks.log 2>&1
+                rc-service disks-manager start >> /var/log/libvirt/custom_hooks.log 2>&1
                 /usr/local/bin/gpu-reattach.sh >> /var/log/libvirt/custom_hooks.log 2>&1
                 ;;
 	esac
