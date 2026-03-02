@@ -3,11 +3,16 @@
 description="Mount disks after boot"
 
 depend() {
-    need localmount
+    need localmount udev-settle
+    need modules
 }
 
 start() {
     modprobe fuse 2>/dev/null
+    ebegin "Waiting for disks…"
+    udevadm settle
+    sleep 2
+
     ebegin "Mounting disks in user space"
     mkdir -p /run/media/yot/{HDD1TB,SSD1TB,NVME1TB,HDD}
     sudo ntfs-3g -o uid=1000,gid=1000,dmask=0022,fmask=0033 /dev/disk/by-uuid/F890E59090E555A2 /run/media/yot/HDD1TB

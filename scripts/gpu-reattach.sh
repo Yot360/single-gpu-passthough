@@ -23,13 +23,13 @@ echo 1 > /sys/bus/pci/devices/$GPU_AUDIO/remove 2>/dev/null || true
 sleep 1
 
 echo "Suspending system to reset gpu..."
-rtcwake -m mem -s 5
+rtcwake -m mem -s 8
 
-sleep 1
+sleep 2
 
 echo "Rescan PCI..."
 echo 1 > /sys/bus/pci/rescan
-sleep 1
+sleep 3
 
 echo "Reloading amdgpu..."
 modprobe amdgpu
