@@ -1,18 +1,27 @@
 #!/bin/bash
 
-if [[ $OBJECT == "win11" ]]; then
-	case "$OPERATION" in
+LOG_FILE="/tmp/gpu-hooks-$(date +%s).log"
+
+if [[ $1 == "win11" ]]; then
+	case "$2" in
         	"prepare")
-                rc-service libvirt-inhibit start >> /var/log/libvirt/custom_hooks.log 2>&1
-                rc-service disks-manager stop >> /var/log/libvirt/custom_hooks.log 2>&1
-                /usr/local/bin/gpu-detach.sh >> /var/log/libvirt/custom_hooks.log 2>&1
+                {
+			echo "[$(date)] === PREPARE START ==="
+			rc-service libvirt-inhibit start
+			rc-service disks-manager stop
+			/usr/local/bin/gpu-detach.sh
+			echo "[$(date)] === PREPARE END ==="
+                } 2>&1 | tee "$LOG_FILE"
                 ;;
 
                 "release")
-                rc-service libvirt-inhibit stop >> /var/log/libvirt/custom_hooks.log 2>&1
-                /usr/local/bin/gpu-reattach.sh >> /var/log/libvirt/custom_hooks.log 2>&1
-                rc-service disks-manager start >> /var/log/libvirt/custom_hooks.log 2>&1
+                {
+			echo "[$(date)] === RELEASE START ==="
+			rc-service libvirt-inhibit stop
+			rc-service disks-manager start
+			/usr/local/bin/gpu-reattach.sh
+			echo "[$(date)] === RELEASE END ==="
+                } 2>&1 | tee "$LOG_FILE"
                 ;;
 	esac
 fi
-
